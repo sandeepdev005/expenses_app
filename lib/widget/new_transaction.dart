@@ -17,6 +17,31 @@ class _NewUserTransactionState extends State<NewUserTransaction> {
   final _amountInputController = TextEditingController();
   DateTime? _selectedDate;
 
+  @override
+  void initState() {
+    print('initilization');
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant NewUserTransaction oldWidget) {
+
+    //api calls
+    //som kind of logic change based on user event
+    //User action on buttons
+
+    print('update the build');
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    print('delete the component');
+    //cleaning up listener and live connection
+    super.dispose();
+  }
+
+
   void submitData() {
     if (_amountInputController.text.isEmpty) return;
     var title = _titleInputController.text;
@@ -25,11 +50,7 @@ class _NewUserTransactionState extends State<NewUserTransaction> {
     if (title.isEmpty || amount <= 0 || _selectedDate == null) {
       return;
     }
-    widget.addNewTransaction(
-      title,
-      amount,
-      _selectedDate
-    );
+    widget.addNewTransaction(title, amount, _selectedDate);
 
     //hide the modal dialog after adding the transaction
     Navigator.of(context).pop();
@@ -51,57 +72,65 @@ class _NewUserTransactionState extends State<NewUserTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Title',
-              ),
-              controller: _titleInputController,
-            ),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Amount',
-              ),
-              controller: _amountInputController,
-              keyboardType: TextInputType.number,
-              //onSubmitted -> keyboard done functionality
-              // onSubmitted: (value)=> submitData(), it requires parameter
-              //#case2 onSubmitted: submitData, => other way we can use onSubmitted , we need to define in such a way that , method should receive parameter
-              onSubmitted: (_) =>
-                  submitData(), // I don't care about the parameter , at that case we can use _ operator
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _selectedDate == null
-                        ? 'No Date Selected'
-                        : 'Picked Date ${DateFormat.yMMMd().format(_selectedDate!)}',
-                  ),
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Container(
+          padding: EdgeInsets.only(
+            left: 10,
+            right: 10,
+            top: 10,
+            // MediaQuery.of(context).viewInsets.bottom -> How much space taken by bottom keyboard
+            bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Title',
                 ),
-                FlatButton(
-                  onPressed: _presentDatePicker,
-                  child: Text(
-                    'Choose Date',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                controller: _titleInputController,
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Amount',
+                ),
+                controller: _amountInputController,
+                keyboardType: TextInputType.number,
+                //onSubmitted -> keyboard done functionality
+                // onSubmitted: (value)=> submitData(), it requires parameter
+                //#case2 onSubmitted: submitData, => other way we can use onSubmitted , we need to define in such a way that , method should receive parameter
+                onSubmitted: (_) =>
+                    submitData(), // I don't care about the parameter , at that case we can use _ operator
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedDate == null
+                          ? 'No Date Selected'
+                          : 'Picked Date ${DateFormat.yMMMd().format(_selectedDate!)}',
+                    ),
                   ),
-                  textColor: Theme.of(context).primaryColor,
-                )
-              ],
-            ),
-            RaisedButton(
-              color: Colors.purple,
-              textColor: Colors.white,
-              onPressed: submitData,
-              child: Text("Add Transaction"),
-            )
-          ],
+                  FlatButton(
+                    onPressed: _presentDatePicker,
+                    child: Text(
+                      'Choose Date',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    textColor: Theme.of(context).primaryColor,
+                  )
+                ],
+              ),
+              RaisedButton(
+                color: Colors.purple,
+                textColor: Colors.white,
+                onPressed: submitData,
+                child: Text("Add Transaction"),
+              )
+            ],
+          ),
         ),
       ),
     );
